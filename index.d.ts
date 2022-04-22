@@ -88,6 +88,32 @@ interface Modal extends Phoenix.Identifiable {
   text: string;
 
   /**
+   *  property for whether the modal has a shadow, by default true
+   */
+  hasShadow: boolean;
+  /**
+   *  property for the alignment of the text (left|right|centre|center), by default left
+   */
+  textAlignment: 'left' | 'right' | 'centre' | 'center';
+  /**
+   *  dynamic property for the font name used for the text, by default System
+   */
+  font: string;
+  /**
+   *  property for whether the modal behaves as an input modal, by default false
+   */
+  isInput: boolean;
+  /**
+   *  property for the placeholder string that will be displayed when the input is empty, by default empty
+   */
+  inputPlaceholder?: string;
+
+  /**
+   * callback function to call when the input modal’s text field value changes, receives the value as the first argument for the callback
+   */
+  textDidChange(value: string): void;
+
+  /**
    * Returns the frame for the modal, the frame is adjusted for the current
    * message, therefor you must first set the message to get an accurate frame.
    */
@@ -102,6 +128,11 @@ interface Modal extends Phoenix.Identifiable {
    * Closes the modal.
    */
   close(): void;
+
+  /**
+   * or setTextColor(...) sets a custom text colour with the given RGBA values, for example setTextColor(34, 139, 34, 1)
+   */
+  setTextColour(red: number, green: number, blue: number, alpha: number): void;
 }
 
 interface ModalObject {
@@ -143,6 +174,32 @@ interface ModalObject {
      * Dynamic property for the text displayed in the modal.
      */
     text?: string;
+
+    /**
+     *  property for whether the modal has a shadow, by default true
+     */
+    hasShadow?: boolean;
+    /**
+     *  property for the alignment of the text (left|right|centre|center), by default left
+     */
+    textAlignment?: 'left' | 'right' | 'centre' | 'center';
+    /**
+     *  dynamic property for the font name used for the text, by default System
+     */
+    font?: string;
+    /**
+     *  property for whether the modal behaves as an input modal, by default false
+     */
+    isInput?: boolean;
+    /**
+     *  property for the placeholder string that will be displayed when the input is empty, by default empty
+     */
+    inputPlaceholder?: string;
+
+    /**
+     * callback function to call when the input modal’s text field value changes, receives the value as the first argument for the callback
+     */
+    textDidChange?(value: string): void;
   }): Modal;
 }
 
@@ -692,6 +749,7 @@ interface EventObject {
    * the last argument, for any additional arguments see events.
    */
   new (event: Phoenix.Event, callback: (handler: Event) => void): Event;
+  new (event: Phoenix.DeviceEvent, callback: (handler: Event) => void): Event;
   new (
     event: Phoenix.AppEvent,
     callback: (target: App, handler: Event) => void
@@ -932,8 +990,10 @@ declare namespace Phoenix {
     | 'willTerminate'
     | 'screensDidChange'
     | 'spaceDidChange';
+  type DeviceEvent =
+    | 'deviceWillSleep'
+    | 'deviceDidWake';
   type MouseEvent =
-    | 'mouseDidMove'
     | 'mouseDidMove'
     | 'mouseDidLeftClick'
     | 'mouseDidRightClick'
